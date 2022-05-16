@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="./lib/bootstrap-5.1.3-dist/css/bootstrap.css" rel="stylesheet">
+		<!-- <link href="css/font_awesome_css.css" rel="stylesheet"> -->
+		<meta charset="UTF-8">
+	</head>
+	<title>Lottery</title>
+	<body>
+		<div class="container">
+			<main>
+				<form style="margin-bottom: 50px;">
+					<div class="d-flex flex-column flex-md-row align-items-center pt-3 pb-3 mb-3 border-bottom">
+						<a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+						<svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" class="me-2" viewBox="0 0 118 94" role="img"><title>Bootstrap</title><path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z" fill="currentColor"></path></svg>
+						<span class="fs-4">Paginador - APIs</span>
+						</a>	
+						<nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+							<a class="me-3 py-2 text-dark text-decoration-none" href="index.html">Voltar</a>	
+						</nav>
+					</div>
+				</form>
+
+				<div id="contBtTopID" class="rarContainerPg"></div>
+
+				<div id="contBtBottomID" class="rarContainerPg"></div>
+
+			</main>
+		</div>
+	</body>
+	<script src="./lib/jquery-3.6.0.min.js"></script>
+    <script src="./lib/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
+	<script src="./lib/rar-lib-1.0.0/utils.js"></script>
+	<script src="./lib/funcoes/rar-paginador-1.0.0.js"></script>
+
+
+	<script>
+		/////////// EXEMPLO  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		//INITIALIZE OBJECTS/PREPARE OBJECTS
+		$(document).ready(function(){
+			rarPaginator(criaPaginador());
+
+			
+		});
+
+		function criaPaginador(){
+			return {
+				containerPgClass: '.rarContainerPg',
+				containersId: ['#contBtTopID','#contBtBottomID'],
+				lista: getLista(),
+				nPgAtual: 1,
+				qtdTotalRegsInDb: 100,
+				qdtRegPorPag: 10,
+				labels: ['Primeiro','Anterior','Próximo','Último'],
+				btnIdInitFocus: 1,
+                log: true
+			}
+		}
+
+
+		//////// CONSTANTES ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		var RAR_CONTAINER_NAV_CLASS = 'rarContainerNav';
+		var RAR_BTN_NAV_CLASS 		= 'btn_nav_pg';
+		var RAR_BTN_ID_TP      		= 'btnTp-';
+		var RAR_BTN_ID_BT      		= 'btnBt-';
+		var UL_TP_ID				= 'ulTpID';
+		var UL_BT_ID				= 'ulBtID';
+		var BTN_LMT_IDS     		= [
+										'btnLmtTpr-1','btnLmtTan-2','btnLmtTpx-3','btnLmtTul-4',
+										'btnLmtBpr-1','btnLmtBan-2','btnLmtBpx-3','btnLmtBul-4'
+									  ];
+
+
+		/////// CONSTRUCTOR ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		function rarPaginator(pgObject){
+			if(pgObject === null)return;
+			let pgObjectNew = rarCreateObjPaginator(pgObject);
+			
+			rarCreateElements(pgObjectNew);
+			rarInitElements();
+			rarEventPgElements(pgObjectNew);
+		}
+
+		/////// CREATE OBJECTS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		function rarCreateElements(pgObject){
+			let navTp 	 = rarCreateContainerNav('#nvTp-1');
+			let navBt 	 = rarCreateContainerNav('#nvTb-2');
+			let ulTp  	 = rarCrateUlNav('ulTpID');
+			let ulBt  	 = rarCrateUlNav('ulBtID');
+			let labels   = addIcon(pgObject.labels);
+
+			//TOP
+			let elLmtTopE = [rarPgCreateButton(BTN_LMT_IDS[0], labels[0], RAR_BTN_NAV_CLASS), rarPgCreateButton(BTN_LMT_IDS[1], labels[1], RAR_BTN_NAV_CLASS)];
+			ulTp.append(elLmtTopE);
+			let elLmtTopD = [rarPgCreateButton(BTN_LMT_IDS[2], labels[2], RAR_BTN_NAV_CLASS), rarPgCreateButton(BTN_LMT_IDS[3], labels[3], RAR_BTN_NAV_CLASS)];
+			let elTop = rarFactoryElements(RAR_BTN_ID_TP, pgObject.paginator.qtdPaginas, ulTp);
+			elTop.append(elLmtTopD);
+			$(navTp).append(elTop);
+			$(pgObject.containersId[0]).append($(navTp));
+
+			//bottom
+			let elLmtBttE = [rarPgCreateButton(BTN_LMT_IDS[4], labels[0], RAR_BTN_NAV_CLASS), rarPgCreateButton(BTN_LMT_IDS[5], labels[1], RAR_BTN_NAV_CLASS)];
+			ulBt.append(elLmtBttE);
+			let elBttom = rarFactoryElements(RAR_BTN_ID_BT, pgObject.paginator.qtdPaginas, ulBt);
+			let elLmtBttD = [rarPgCreateButton(BTN_LMT_IDS[6], labels[2], RAR_BTN_NAV_CLASS), rarPgCreateButton(BTN_LMT_IDS[7], labels[3], RAR_BTN_NAV_CLASS)];
+			elBttom.append(elLmtBttD);
+			$(navBt).append(elBttom);
+			$(pgObject.containersId[1]).append($(navBt));
+		}
+
+		function rarInitElements(){
+			$('#'+RAR_BTN_ID_TP+1).addClass('active');
+			$('#'+RAR_BTN_ID_BT+1).addClass('active');
+		}
+	
+		///////////// EVENT ELEMENTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		function rarEventPgElements(pgObject){
+			$('.'+RAR_BTN_NAV_CLASS).click(function(){
+				let btn            = $(this);
+				let pgCurrent      = getIdBtn(pgObject, btn);
+
+				if(rarCancelPaginacao(pgObject, pgCurrent))return;
+				
+				let pgDinamic      = rarBuildPaginador(pgObject.paginator.list, pgCurrent, pgObject.paginator.qtdTotalRegs, pgObject.paginator.qtdRegPorPag);
+				pgObject.paginator = pgDinamic;
+				
+				rarSetFocus(pgObject, pgCurrent);
+				rarPgLockButtons(pgObject, pgCurrent);
+				
+				if(pgObject.log)console.log('RAR-PAGINTADOR-ON-DEMAND STS:');
+				if(pgObject.log)console.log(pgDinamic);
+				
+			});
+		}
+
+		/////// HELPER FUNCTIONS /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		function rarSetFocus(pgObject, buttonId){
+
+			$('#'+UL_TP_ID).find('li').each(function(j, li){
+				$(li).removeClass('active');
+			});
+
+			$('#'+UL_BT_ID).find('li').each(function(j, li){
+				$(li).removeClass('active');
+			});
+
+
+			$('#'+RAR_BTN_ID_TP+buttonId).addClass('active');
+			$('#'+RAR_BTN_ID_BT+buttonId).addClass('active');
+		}
+
+		
+		function rarPgLockButtons(pgObject, buttonId){
+			let pgCurrent = pgObject.paginator.nPagina;
+			let initPg    = 1;
+			let endPg     = pgObject.paginator.qtdPaginas;
+			let btns      = [];
+
+			rarUnlockButtons();
+			
+			if(pgCurrent === initPg){
+				btns.push('#'+BTN_LMT_IDS[0]);
+				btns.push('#'+BTN_LMT_IDS[1]);
+				btns.push('#'+BTN_LMT_IDS[4]);
+				btns.push('#'+BTN_LMT_IDS[5]);
+				rarLockButton(btns, true);
+			}else if(pgCurrent === endPg){
+				btns.push('#'+BTN_LMT_IDS[2]);
+				btns.push('#'+BTN_LMT_IDS[3]);
+				btns.push('#'+BTN_LMT_IDS[6]);
+				btns.push('#'+BTN_LMT_IDS[7]);
+				rarLockButton(btns, true);
+			}
+
+		}
+
+		function rarCreateObjPaginator(pgObject){
+			let pgDinamic = rarBuildPaginador(pgObject.lista, pgObject.nPgAtual, pgObject.qtdTotalRegsInDb, pgObject.qdtRegPorPag);
+
+			return rarPgObj = {
+				containerPgClass: pgObject.containerPgClass,
+				containersId: pgObject.containersId,
+				paginator: pgDinamic,
+				labels: pgObject.labels,
+				btnIdInitFocus: pgObject.btnIdInitFocus,
+				log: pgObject.log
+			};
+		}
+
+		function rarCreateContainerNav(id){
+			let nav = $('<nav>');
+			$(nav).prop('id', id);
+			$(nav).prop('class', RAR_CONTAINER_NAV_CLASS);
+			return nav;
+		}
+
+		function rarCrateUlNav(id){
+			let ul = jQuery('<ul>');
+			$(ul).prop('id', id); 
+			$(ul).prop('class', 'pagination');
+			return ul;
+		}
+
+		function rarFactoryElements(id, qtd, ul){
+			for(let i=1; i<=qtd; i++){
+				const d = new Date();
+				let btn = rarPgCreateButton(id+i, i, RAR_BTN_NAV_CLASS);
+				$(ul).append(btn);
+			}
+			return ul;
+		}
+
+		function rarPgCreateButton(id, label, cssClass){
+			let li  = jQuery('<li>');
+			jQuery(li).prop('id', id);
+			jQuery(li).addClass('page-item');
+			jQuery(li).addClass(cssClass);
+			jQuery(li).css('cursor','pointer');
+			let a  = jQuery('<a>');
+			jQuery(a).addClass('page-link');
+			jQuery(a).html(label);
+			jQuery(li).append(a);
+			return li;
+		}
+
+		function rarLockButton(btnIDs, lock){
+
+			if(lock){
+				for(var i=0; i<btnIDs.length; i++){
+					$(btnIDs[i]).addClass('disabled');
+					$(btnIDs[i]).prop('disabled', true);
+				}
+			}else {
+				for(var i=0; i<btnIDs.length; i++){
+					$(btnIDs[i]).removeClass('disabled');
+					$(btnIDs[i]).prop('disabled', false);
+				}
+			}
+		}
+
+		function getIdBtn(pgObject, btn){
+			let id        = $(btn).prop('id');
+			let targetId  = null;
+			let btnPadrao = id.split('-')[0]+ '-';
+
+			if(btnPadrao === RAR_BTN_ID_TP | btnPadrao === RAR_BTN_ID_BT){//botoes numericos
+				targetId = Number($(btn).attr('id').split('-')[1]);
+
+			}else {
+				//botoes de limites
+				for(let i=0; i<BTN_LMT_IDS.length; i++){
+
+					if(id === BTN_LMT_IDS[i]){
+						let ps = Number(BTN_LMT_IDS[i].split('-')[1]);
+						
+						if(ps === 1){//primeiro
+							targetId = 1;
+							break;
+						}else if(ps === 2){//anterior
+							targetId = pgObject.paginator.nPagina ===  1 ? 1 : pgObject.paginator.nPagina - 1;
+							break;
+						}else if(ps === 3){//proximo
+							targetId =  pgObject.paginator.nPagina === pgObject.paginator.qtdPaginas ? pgObject.paginator.qtdPaginas : pgObject.paginator.nPagina + 1;
+							break;
+						}else if(ps === 4){//ultimo
+							targetId = pgObject.paginator.qtdPaginas;
+							break;
+						}
+					}
+				}
+			}
+			return targetId;
+		}
+
+		function rarUnlockButtons(){ 
+			$('.'+RAR_BTN_NAV_CLASS).each(function(j, li){
+				$(li).removeClass('disabled');
+				$(li).prop('disabled', false);
+			});
+		}
+
+		function rarCancelPaginacao(pgObject, pgCurrent){
+			if(pgObject.paginator.nPagina === pgCurrent)return true;
+			return false;
+		}
+
+		function addIcon(labels){
+			let iconLabels = [];
+			iconLabels.push("<i class='fa fa-caret-left'></i><i class='fa fa-caret-left' style='margin-right:4px;'></i>"+labels[0]);
+			iconLabels.push(labels[1]+"<i class='fa fa-caret-right' style='margin-left:4px;'></i>");
+			iconLabels.push("<i class='fa fa-caret-left'></i>"+labels[2]);
+			iconLabels.push(labels[3]+"<i class='fa fa-caret-right' style='margin-left:4px;'></i><i class='fa fa-caret-right'></i>");
+			iconLabels.push("<i class='fa fa-caret-left'></i><i class='fa fa-caret-left' style='margin-right:4px;'></i>"+labels[4]);
+			iconLabels.push(labels[5]+"<i class='fa fa-caret-right' style='margin-left:4px;'></i>");
+			iconLabels.push("<i class='fa fa-caret-left'></i>"+labels[6]);
+			iconLabels.push(labels[7]+"<i class='fa fa-caret-right' style='margin-left:4px;'></i><i class='fa fa-caret-right'></i>");
+			return iconLabels;
+		}
+
+
+
+
+
+		function getLista(){
+			var resp = [];
+
+			for(var i=1; i<=100; i++){
+			var obj = {id:i, pais:'pais-'+i, ativo: calc(i)}
+				resp.push(obj);
+			}
+			return resp;
+		}
+
+		function calc(iterate){
+			if(iterate % 2 == 0)return 'S';
+			return 'N';
+		}
+
+
+
+	</script>
+
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="./lib/bootstrap-5.1.3-dist/css/bootstrap.css" rel="stylesheet">
+		<!-- <link href="css/font_awesome_css.css" rel="stylesheet"> -->
+		<meta charset="UTF-8">
+	</head>
+	<title>Lottery</title>
+
+	<style>
+		.calc {
+			background-color: #D8D8D8;
+			border: 1px solid #A4A4A4;
+			width: 356px;
+			height: 427px;
+		}
+
+		.display {
+			background-color: #2ECCFA;
+			border: 1px solid #084B8A;
+			height: 75px;
+			color: white;
+			font-size: 50px;
+			padding-left: 3px;
+			margin-left: 8px;
+			margin-right: 8px;
+			margin-top: 8px;
+		}
+		.teclado {
+			margin: 5px;
+		}
+
+		.botao {
+			background-color: #BDBDBD;
+			width: 80px;
+			height: 60px;
+			float: left;
+			margin: 3px;
+			text-align: center;
+			font-size: 40px;
+			cursor: pointer;
+		}
+
+		.chars {
+			font-size: 30px;
+		}
+
+		.chars-ajust {
+			padding-top: 6px;
+		}
+
+	</style>
+
+
+	<body>
+		<div class="container">
+            <main>
+				<form>
+					<div class="d-flex flex-column flex-md-row align-items-center pt-3 pb-3 mb-1 border-bottom">
+						<a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+						<svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" class="me-2" viewBox="0 0 118 94" role="img"><title>Bootstrap</title><path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z" fill="currentColor"></path></svg>
+						<span class="fs-4">Calculadora</span>
+                        </a>
+						<nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+							<a class="me-3 py-2 text-dark text-decoration-none" href="index.html">Voltar</a>	
+						</nav>
+					</div>
+
+					 <div style="margin:50px;">
+						
+						<div class="calc">
+							<div id="displayID" class="display">
+								
+							</div>
+							<div class="teclado">
+								<div id="b1" class="botao">1</div>
+								<div id="b2" class="botao">2</div>
+								<div id="b3" class="botao">3</div>
+								<div id="bc" class="botao chars chars-ajust">C</div>
+								<div id="b4" class="botao">4</div>
+								<div id="b5"class="botao">5</div>
+								<div id="b6" class="botao">6</div>
+								<div id="bce" class="botao chars chars-ajust">CE</div>
+								<div id="b7" class="botao">7</div>
+								<div id="b8" class="botao">8</div>
+								<div id="b9" class="botao">9</div>
+								<div id="bperc" class="botao chars chars-ajust">%</div>
+								<div id="b0" class="botao">0</div>
+								<div id="bma" class="botao chars">+</div>
+								<div id="bme" class="botao chars chars-ajust">-</div>
+								<div id="bx" class="botao chars chars-ajust">x</div>
+								<div id="bv"class="botao chars">,</div>
+								<div id="bi" class="botao chars chars-ajust">=</div>
+							</div>
+						</div>
+
+					 </div>
+
+			
+				</form>
+			  </main>
+		</div>
+	</body>
+	<script src="./lib/jquery-3.6.0.min.js"></script>
+    <script src="./lib/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
+	<script src="./lib/rar-lib-1.0.0/utils.js"></script>
+
+
+	<script>
+
+
+		//INITIALIZE OBJECTS/PREPARE OBJECTS
+		$(document).ready(function(){
+			clicarEvent();
+		});
+		
+		
+		function clicarEvent(){
+			$('.botao').click(function(event){
+				let nan  = isNaN($(this).text());
+				let char = nan ? $(this).text() : Number($(this).text());
+
+				if(!nan){
+					$('#displayID').append(char);
+
+				}else {
+
+					let char =  $(this).text();
+					
+					if(char === 'C'){
+						$('#displayID').text('');
+					}
+
+					if(char === '+'){
+						
+					}
+				}
+	
+			});
+		}
+
+		
+	
+	</script>
+
+
+</html>

@@ -12,7 +12,7 @@
 			background-color: #D8D8D8;
 			border: 1px solid #A4A4A4;
 			width: 356px;
-			height: 427px;
+			height: 450px;
 		}
 
 		.display {
@@ -22,6 +22,18 @@
 			color: white;
 			font-size: 50px;
 			padding-left: 3px;
+			margin-left: 8px;
+			margin-right: 8px;
+			margin-top: 8px;
+		}
+		.display-operacao {
+			color: white;
+			background-color: #494949;
+			border: 1px solid #084B8A;
+			height: 19px;
+			font-size: 11px;
+			padding-left: 3px;
+			padding-bottom: 4px;
 			margin-left: 8px;
 			margin-right: 8px;
 			margin-top: 8px;
@@ -69,9 +81,12 @@
 					 <div style="margin:50px;">
 						
 						<div class="calc">
-							<div id="displayID" class="display">
+							<div id="display-operacaoID" class="display-operacao">
 								
 							</div>
+							<div id="displayID" class="display">
+							</div>
+							
 							<div class="teclado">
 								<div id="b1" class="botao">1</div>
 								<div id="b2" class="botao">2</div>
@@ -114,7 +129,9 @@
 			clicarEvent();
 		});
 		
-		
+		let hist_valores = [];
+		let op = [];
+
 		function clicarEvent(){
 			$('.botao').click(function(event){
 				let nan  = isNaN($(this).text());
@@ -122,18 +139,69 @@
 
 				if(!nan){
 					$('#displayID').append(char);
-
+					op.push(char);
+					//hist_valores.push(char);
 				}else {
 
 					let char =  $(this).text();
 					
 					if(char === 'C'){
 						$('#displayID').text('');
+
+					}else if(char === '+'){
+						let v = $.trim($('#displayID').text());
+						hist_valores.push(v);
+						hist_valores.push('+');
+						$('#displayID').text('');
+						$('#display-operacaoID').append(v + '+');
+
+					}else if(char === '-'){
+						let v = $.trim($('#displayID').text());
+						hist_valores.push(v);
+						$('#displayID').text('');
+						$('#display-operacaoID').append(v + '-');
+
+					}else if(char === 'x'){
+						let v = $.trim($('#displayID').text());
+						hist_valores.push(v);
+						$('#displayID').text('');
+						$('#display-operacaoID').append(v + 'x');
+
+					}else if(char === '='){
+						let v = $.trim($('#displayID').text());
+						hist_valores.push(v);
+						$('#displayID').text('');
+						$('#display-operacaoID').append(v + '=');
+
+					}else if(char === '%'){
+						let v = $.trim($('#displayID').text());
+						hist_valores.push(v);
+						$('#displayID').text('');
+						$('#display-operacaoID').append(v + '%');
+
 					}
 
-					if(char === '+'){
-						
+					if(hist_valores.length > 0){
+						for(let i=0; i<hist_valores.length; i++){
+							let sn = null;
+							if(i%2 === 0){
+								op.push(Number(hist_valores[i]));
+							}else {
+								sn = hist_valores[i];
+							}
+							if(op.length === 2){
+								if(sn === '+'){
+									let total = op[0] + op[1];
+								}else if(sn === '-'){
+									let total = op[0] - op[1];
+								}
+							}
+							let ps = hist_valores[i];
+							let nan  = isNaN(ps);
+
+						}	
 					}
+
 				}
 	
 			});

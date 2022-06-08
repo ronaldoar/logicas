@@ -81,7 +81,6 @@
 					 <div style="margin:50px;">
 						<div class="calc">
 							<div id="display-operacaoID" class="display-operacao">
-								
 							</div>
 							<div id="displayID" class="display">
 							</div>
@@ -123,8 +122,9 @@
 			clicarEvent();
 		});
 
-		var operacao = [];
-		var operador = null;
+		var operacao  = [];
+		var operador  = null;
+		var concluida = false;
 		
 		function clicarEvent(){
 			$('.botao').click(function(event){
@@ -143,62 +143,84 @@
 					cancelar(value);
 					break;
 
+				case '=':
+					calcular();
+					break;
+
 				default:
-					executar(value);
+					montarCalculo(value);
 					break;
 			}
 		}
 
-
-		function executar(value){
+		function montarCalculo(value){
 
 			if(operacInvalida(operador, operacao))return;
-
+			
 			let sinal = isNaN(value);
 
 			if(sinal){
-				operador = value;
-				setHist(operador);
-				resetDisplay('');	
-				
+
+				if(operador === null){
+					operador = value;
+					setHist(value);
+
+				}else if(concluida){
+					resetHist(operacao[0] + operador);
+				}
+
 			}else {
+
 				if(operador !== null){
-					setHist(value);	
-					calcular(value);
+					
+					if(operacao.length == 1){
+						resetDisplay(value);
+						operacao.push(Number(value));
+						
+					}else if(operacao.length > 1) {
+						setDisplay(value);
+						let vl = operacao[1];
+						operacao[1] = Number(vl+value);
+					}
+
 				}else {
 					operacao.push(Number(value));
 					let nums = operacao.join().replace(',','');
 					operacao = [];
 					operacao.push(Number(nums));
-
 					setHist(value);	
 					setDisplay(value);
 				}
 			}
 		}
 
-
-		function cancelar(sinal){
-			if(sinal === 'c'){
-				resetDisplay('');
-				resetHist('');
+		function calcular(){
+			if(operador === '+'){
+				let total   = operacao[0] + operacao[1];
+				operacao[0] = total;
+				setHist(operacao[1]);
+				resetDisplay(total);
+				concluida = true;
 				operacao = [];
-				operador = null;
+				operacao.push(total);
+
+			}else if(operador === 'x'){
+				let total   = operacao[0] * operacao[1];
+				operacao[0] = total;
+				setHist(operacao[1]);
+				resetDisplay(total);
+				concluida = true;
+				operacao = [];
+				operacao.push(total);
 			}
 		}
 
-		function calcular(value){
-			if(operador === '+'){
-				let v       = Number(value);
-				let total   = operacao[0] + v;
-				operacao[0] = total;
-				resetDisplay(total);
-
-			}else if(operador === 'x'){
-				let v       = Number(value);
-				let total   = operacao[0] * v;
-				operacao[0] = total;
-				resetDisplay(total);
+		function cancelar(sinal){
+			if(sinal === 'c'){
+				clearDisplay();
+				clearHist();
+				operacao = [];
+				operador = null;
 			}
 		}
 
@@ -210,20 +232,26 @@
 			$('#displayID').text(numero);
 		}
 
-		function setHist(value){
-			if(value !== 'c' && value !== 'ce'){
-				$('#display-operacaoID').append(value);
-			}
+		function resetHist(numero){
+			$('#display-operacaoID').text(numero);
 		}
 
-		function resetHist(value){
-			if(value !== 'c' && value !== 'ce'){
-				$('#display-operacaoID').text(value);
-			}
+		function clearDisplay(){
+			$('#displayID').text('');
+		}
+
+		function clearHist(){
+			$('#display-operacaoID').text('');
 		}
 
 		function operacInvalida(operador, operacao){
 			if(operador === null & operacao.length === 0)return;
+		}
+
+		function setHist(value){
+			if(value !== 'c' && value !== 'ce'){
+				$('#display-operacaoID').append(value);
+			}
 		}
 	</script>
 

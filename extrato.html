@@ -11,6 +11,49 @@
 		.hideMsg {
 			display: none;
 		}
+		
+		.titulo_extrato {
+			border-top: 1px dashed #0B0B61;
+			border-bottom: 1px dashed #0B0B61;
+			padding: 10px;
+		}
+
+		.lbl {
+			margin-right: 20px;
+			font-weight: bold;
+		}
+
+		.cliente {
+			border-top: 1px dashed #0B4C5F;
+			border-bottom: 1px dashed #0B4C5F;
+			padding: 10px;
+	
+		}
+
+		.conta {
+			border-top: 1px dashed #0B4C5F;
+			border-bottom: 1px dashed #0B4C5F;
+			padding: 10px;
+	
+		}
+
+		.titulo_lacamentos {
+			
+		}
+
+		.tt_lanc {
+			margin-top: 5px;
+			margin-bottom: 10px;
+			font-style: italic;
+		}
+
+		.operacoes {
+			margin-right: 15px;
+		}
+
+
+	
+
 	</style>
 
 	<body>
@@ -35,19 +78,19 @@
 					<div class="row mb-3 mt-4">
 						<div class="col">
 							<div class="input-group mb-3">
-								<span class="input-group-text" id="basic-addon1">Cliente</span>
+								<span class="input-group-text">Cliente</span>
 								<input id="clienteID" type="text" class="form-control" placeholder="Nome do cliente" aria-label="Username" aria-describedby="basic-addon1">
 							</div>
 						</div>
 						<div class="col">
 							<div class="input-group mb-3">
-								<span class="input-group-text" id="basic-addon1">Agência</span>
+								<span class="input-group-text">Agência</span>
 								<input id="agenciaID"  type="text" class="form-control" placeholder="Número da agência" aria-label="Username" aria-describedby="basic-addon1">
 							</div>
 						</div>
 						<div class="col">
 							<div class="input-group mb-3">
-								<span class="input-group-text" id="basic-addon1">Conta</span>
+								<span class="input-group-text">Conta</span>
 								<input id="contaID"  type="text" class="form-control" placeholder="Número da conta" aria-label="Username" aria-describedby="basic-addon1">
 							</div>
 						</div>
@@ -70,6 +113,44 @@
 						<div class="col-3">
 							<button id="grExtID" type="button" class="btn btn-primary">Gerar Extrato</button>
 							<button type="button" class="btn btn-success">Atualizar</button>
+						</div>
+					</div>
+
+					<div style="padding:50px; margin-top:10px; border: 1px solid #A4A4A4; border-radius:5px;">
+						<div class="titulo_extrato">
+							EXTRATO CONTA CORRENTE
+						</div>
+						<div class="cliente">
+							<label class="lbl">CLIENTE:</label><span id="clID"></span>
+						</div>
+						<div class="conta">
+							<label class="lbl">Agência:</label><span id="agID"></span></br>
+							<label class="lbl" >Conta:</label><span id="ctID"></span></br>
+							<label class="lbl">Período:</label><span id="dataMov"></span>
+						</div>
+						<div class="lancamentos">
+							<div class="titulo_lancamento">
+								<label class="tt_lanc">LANÇAMENTOS:</label> </br>
+								<label class="operacoes" id="dpOpID"></label>
+								<label class="operacoes" id="sqOpID"></label>
+								<label class="operacoes" id="trfOpID"></label>
+								
+							</div>
+							<div class="dt_mov">
+
+							</div>
+							<div class="dt_mov">
+
+							</div>
+							<div class="hist">
+
+							</div>
+							<div class="valor">
+
+							</div>
+							<div class="saldo">
+
+							</div>
 						</div>
 					</div>
 					 
@@ -154,6 +235,44 @@
 		}
 
 		function montarExtrato(){
+			exibeMsgExtrato();
+			carregaExtrato();
+		}
+
+		function carregaExtrato(){
+
+			//leitura dos valores do cliente
+			let nomeCli = $('#clienteID').val();
+			let agencia  = $('#agenciaID').val();
+			let conta   = $('#contaID').val();
+
+			$('#clID').text(nomeCli);
+			$('#agID').text(agencia);
+			$('#ctID').text(conta);
+
+			let data = new Date().toLocaleDateString();
+			$('#dataMov').text(data);
+
+			//reset
+			$('#dpOpID').text('');
+			$('#sqOpID').text('');
+			$('#trfOpID').text('');
+
+			//leitura dos valores das operacoes
+			if($('#depositoID:checked').val() === 'D'){
+				$('#dpOpID').text('Depósito');
+			}
+			
+			if($('#saqueID:checked').val() === 'S'){
+				$('#sqOpID').text('Saque');
+			}
+			
+			if($('#transferenciaID:checked').val() === 'T'){
+				$('#trfOpID').text('Transferência');
+			}
+		}
+
+		function exibeMsgExtrato(){
 			$('.alert-success').text('Montando extrato...');
 			$('.alert-success').show();
 			$('.alert-success').fadeOut( 1600, 'linear');
